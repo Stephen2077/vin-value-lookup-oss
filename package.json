@@ -1,0 +1,12 @@
+{
+  "name": "vin-value-lookup-oss",
+  "version": "0.1.0",
+  "description": "Open-source VIN-based vehicle value lookup and dealer quote workflow toolkit.",
+  "type": "module",
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node --test",
+    "scan:public": "node scripts/scan-public-safety.js"
+  },
+  "license": "MIT"
+}

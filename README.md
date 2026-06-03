@@ -2,36 +2,137 @@
 
 VIN Value Lookup is an open-source starter toolkit for VIN-based vehicle value lookup and dealer quote workflows.
 
-The project goal is to help small dealerships and maintainers build auditable quote tools around a simple flow:
+It gives maintainers a clean, provider-neutral foundation for this flow:
 
-1. Enter a VIN and vehicle details.
+1. Enter a VIN and mileage.
 2. Validate the request.
-3. Fetch or plug in vehicle value data from a configurable provider.
+3. Get a vehicle value from a configurable data provider.
 4. Apply dealer quote rules on the server.
 5. Return a customer-safe quote result.
 
-## Open-source scope
+The demo provider is deterministic and local. It is only for development and tests. Real market-data integrations should be added through the provider adapter boundary.
 
-This repository is intentionally provider-neutral. It should not include proprietary vendor credentials, browser profiles, production service details, private deployment notes, or provider-specific selectors.
+## Features
 
-Planned public modules:
-
-- VIN validation
+- VIN normalization and validation
 - Mileage normalization
-- Quote calculation
-- Dealer quote rules
-- Customer-safe quote links
+- Dealer markup and markdown rules
+- Itemized condition adjustments
 - Provider adapter interface
-- Tests for pricing and API boundaries
+- Customer-safe quote workflow
+- Minimal HTTP API
+- Browser demo page
+- Node test suite
+- Public safety scan for forbidden private artifacts
 
-## What is not included
+## Quick Start
 
-This repository does not include private business credentials, live service configuration, browser session automation, production database files, screenshots, or internal handoff documents.
+```bash
+npm install
+npm test
+npm start
+```
 
-## Status
+Then open:
 
-This is a clean public starting point. The implementation should be copied in carefully from private code only after provider-specific and sensitive parts are removed.
+```text
+http://127.0.0.1:4173
+```
+
+## API
+
+`POST /api/quote`
+
+```json
+{
+  "vin": "1HGCM82633A004352",
+  "mileage": 45250,
+  "dealerRule": {
+    "mode": "markup",
+    "percentage": 5
+  },
+  "detailAdjustments": [
+    {
+      "label": "Condition adjustment",
+      "amount": 250
+    }
+  ]
+}
+```
+
+Example response:
+
+```json
+{
+  "ok": true,
+  "quoteId": "004352-45250-27500",
+  "vin": "1HGCM82633A004352",
+  "mileage": 45250,
+  "baseValue": 26500,
+  "customerPrice": 27500,
+  "currency": "USD",
+  "adjustments": [],
+  "totalAdjustment": 0
+}
+```
+
+## Project Structure
+
+```text
+src/
+  mileage.js
+  pricing.js
+  quoteWorkflow.js
+  server.js
+  vin.js
+  providers/
+    staticValueProvider.js
+public/
+  index.html
+  app.js
+  styles.css
+test/
+  *.test.js
+```
+
+## Provider Boundary
+
+Real data integrations should implement a provider with this shape:
+
+```js
+const provider = {
+  async lookup({ vin, mileage }) {
+    return {
+      provider: 'provider-name',
+      baseValue: 25000,
+      currency: 'USD'
+    };
+  }
+};
+```
+
+The quote workflow intentionally does not expose provider internals in the customer response.
+
+## Public Repository Rules
+
+Do not commit:
+
+- `.env` files
+- credentials
+- production database files
+- screenshots
+- browser profiles
+- private deployment notes
+- provider-specific selectors
+- internal handoff documents
+
+Run this before publishing changes:
+
+```bash
+npm run scan:public
+npm test
+```
 
 ## License
 
-License not selected yet.
+MIT

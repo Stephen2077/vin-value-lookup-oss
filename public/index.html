@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>VIN Value Lookup</title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <main class="shell">
+      <section class="hero">
+        <div>
+          <p class="eyebrow">Open-source quote workflow toolkit</p>
+          <h1>VIN Value Lookup</h1>
+          <p class="summary">Validate a VIN, normalize mileage, request a vehicle value, and return a customer-safe dealer quote.</p>
+        </div>
+        <div class="status">Provider-neutral demo</div>
+      </section>
+
+      <section class="workspace">
+        <form id="quoteForm" class="panel">
+          <label>
+            <span>VIN</span>
+            <input name="vin" maxlength="17" value="1HGCM82633A004352" required>
+          </label>
+          <label>
+            <span>Mileage</span>
+            <input name="mileage" inputmode="numeric" value="45250" required>
+          </label>
+          <label>
+            <span>Dealer rule</span>
+            <select name="mode">
+              <option value="markup">Markup</option>
+              <option value="markdown">Markdown</option>
+            </select>
+          </label>
+          <label>
+            <span>Percentage</span>
+            <input name="percentage" inputmode="decimal" value="5">
+          </label>
+          <label>
+            <span>Condition adjustment</span>
+            <input name="adjustment" inputmode="numeric" value="250">
+          </label>
+          <button type="submit">Create quote</button>
+        </form>
+
+        <section class="panel result" aria-live="polite">
+          <h2>Quote result</h2>
+          <pre id="result">Submit the form to create a quote.</pre>
+        </section>
+      </section>
+    </main>
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>
