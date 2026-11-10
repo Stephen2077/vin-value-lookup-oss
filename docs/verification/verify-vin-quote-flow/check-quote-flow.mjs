@@ -44,6 +44,23 @@ function hidesProvider(quote) {
   return !('provider' in quote) && !('confidence' in quote) && !('providerRaw' in quote);
 }
 
+function stringsIn(value, found = []) {
+  if (typeof value === 'string') found.push(value);
+  else if (Array.isArray(value)) {
+    for (const item of value) stringsIn(item, found);
+  } else if (value && typeof value === 'object') {
+    for (const item of Object.values(value)) stringsIn(item, found);
+  }
+  return found;
+}
+
+function echoesThrownText(http, thrown) {
+  const needle = thrown?.message;
+  if (typeof needle !== 'string' || needle.length === 0) return false;
+  if (typeof http.text === 'string' && http.text.includes(needle)) return true;
+  return stringsIn(http.payload).some((value) => value.includes(needle));
+}
+
 function spyProvider(lookup) {
   const calls = [];
   return {
@@ -295,7 +312,7 @@ for (const item of unsafeBodies) {
     thrown = error;
   }
   const http = await post(port, item.body);
-  const echoed = thrown && http.payload && http.payload.message === thrown.message;
+  const echoed = echoesThrownText(http, thrown);
   if (echoed) {
     unsafePaths.push(
       `You submit a valid VIN and mileage, and ${item.label}. The response is HTTP ${http.status} with ${http.text}`
